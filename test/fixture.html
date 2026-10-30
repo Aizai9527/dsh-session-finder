@@ -125,6 +125,16 @@
 	};
 	window.fetch = async (url) => {
 		const href = String(url ?? "");
+		// The header's "检查更新" reads the published manifest from raw GitHub.
+		if (href.includes("raw.githubusercontent.com")) {
+			window.__updateChecked = (window.__updateChecked ?? 0) + 1;
+			return {
+				ok: true,
+				async json() {
+					return { name: "dsh-session-finder", version: "0.7.3" };
+				}
+			};
+		}
 		const params = new URL(href, "http://fixture.invalid").searchParams;
 		const query = decodeURIComponent(params.get("q") ?? "插件");
 		const offset = Number(params.get("offset") ?? "0");

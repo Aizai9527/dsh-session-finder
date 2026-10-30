@@ -1,57 +1,57 @@
 {
-	"name": "dsh-session-finder",
-	"version": "0.7.1",
-	"description": "Search message content across every DSH session and jump to the exact message that matched.",
-	"type": "module",
-	"main": "./lib/index.js",
-	"exports": {
-		".": "./lib/index.js",
-		"./client": "./lib/client.js",
-		"./package.json": "./package.json"
-	},
-	"files": [
-		"lib",
-		"cordis.patch.yml",
-		"README.md",
-		"README.en.md",
-		"LICENSE"
-	],
-	"dsh": {
-		"bundle": {
-			"patch": "./cordis.patch.yml"
-		},
-		"client": {
-			"platform": "web",
-			"inject": [
-				"@deepseek-ai/dsh-client-ui-conversation"
-			]
-		},
-		"manifestVersion": 1
-	},
-	"scripts": {
-		"test": "node test/needles.test.mjs && node test/search.test.mjs && node test/route.test.mjs && node test/client-inject.test.mjs && node test/client-nav.test.mjs && node test/client-target.test.mjs && node test/client-paging.test.mjs && node test/client-scope.test.mjs && node test/client-anchor.test.mjs && node test/client-history.test.mjs && node test/client-perf.test.mjs",
-		"check": "node --check lib/client.js && node --check lib/index.js && node --check lib/search.js"
-	},
-	"keywords": [
-		"deepseek-harness",
-		"dsh",
-		"dsh-plugin",
-		"search",
-		"session",
-		"history"
-	],
-	"engines": {
-		"node": ">=20",
-		"dsh": ">=0.2.0"
-	},
-	"license": "MIT",
-	"repository": {
-		"type": "git",
-		"url": "git+https://github.com/Aizai9527/dsh-session-finder.git"
-	},
-	"homepage": "https://github.com/Aizai9527/dsh-session-finder#readme",
-	"bugs": {
-		"url": "https://github.com/Aizai9527/dsh-session-finder/issues"
-	},
-	"author": "Aizai9527"
+  "name": "dsh-session-finder",
+  "version": "0.7.2",
+  "description": "Search message content across every DSH session and jump to the exact message that matched.",
+  "type": "module",
+  "main": "./lib/index.js",
+  "exports": {
+    ".": "./lib/index.js",
+    "./client": "./lib/client.js",
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "lib",
+    "cordis.patch.yml",
+    "README.md",
+    "README.en.md",
+    "LICENSE"
+  ],
+  "dsh": {
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    },
+    "client": {
+      "platform": "web",
+      "inject": [
+        "@deepseek-ai/dsh-client-ui-conversation"
+      ]
+    },
+    "manifestVersion": 1
+  },
+  "scripts": {
+    "test": "node test/needles.test.mjs && node test/search.test.mjs && node test/route.test.mjs && node test/client-inject.test.mjs && node test/client-nav.test.mjs && node test/client-target.test.mjs && node test/client-paging.test.mjs && node test/client-scope.test.mjs && node test/client-anchor.test.mjs && node test/client-history.test.mjs && node test/client-perf.test.mjs && node test/client-tools.test.mjs",
+    "check": "node --check lib/client.js && node --check lib/index.js && node --check lib/search.js"
+  },
+  "keywords": [
+    "deepseek-harness",
+    "dsh",
+    "dsh-plugin",
+    "search",
+    "session",
+    "history"
+  ],
+  "engines": {
+    "node": ">=20",
+    "dsh": ">=0.2.0"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Aizai9527/dsh-session-finder.git"
+  },
+  "homepage": "https://github.com/Aizai9527/dsh-session-finder#readme",
+  "bugs": {
+    "url": "https://github.com/Aizai9527/dsh-session-finder/issues"
+  },
+  "author": "Aizai9527"
 }

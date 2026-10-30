@@ -1,4 +1,4 @@
-# dsh-session-finder v0.7.0 (2026-10-30)
+# dsh-session-finder v0.7.2 (2026-10-30)
 
 [English](README.en.md) · [中文](README.md)
 
@@ -38,6 +38,8 @@ Restart the desktop app afterwards: both the host half and the client bundle loa
 8. Up to 8M characters per session are indexed; a page with no hit automatically reads one page of older sessions (max 4 pages / 20 s), and only then says "no match".
 9. With an empty input, the last ten queries are listed: click one to search again, `↑` `↓` to walk, `Enter` to take it, "Clear history" removes them all.
 10. The opacity slider at the bottom adjusts the panel background (45%–100%) and remembers the setting.
+11. The status line ends with this query's time (e.g. `· took 0.13 s`), so a cold cache is easy to tell from a slow one.
+12. The bottom strip holds **GitHub**, **Report an issue** and **Check for updates**, with the running version on the right; the check only reads `package.json` from the repo, never the rate-limited API.
 
 ## Limits and side effects
 
@@ -76,6 +78,8 @@ Iterations between 2026-10-29 and 2026-10-30, newest first.
 
 | Version | Change |
 | --- | --- |
+| v0.7.2 | Bottom strip with GitHub, issue and update buttons plus the running version. |
+| v0.7.1 | Query time in the status line; history prewarm only after a 400 ms dwell, startup warm-up earlier and gentler. |
 | v0.7.0 | Disk-backed cache and idle warm-up, 2.5s / 150 sessions / 6 readers, jump no longer waits; wide search 10.2s → 1.7s |
 | v0.6.1 | `reachSeq()` retries `loadThrough` to `baseSeq <= seq`; turn anchor added |
 | v0.6.0 | Search history: last ten, `↑↓` / `Enter`, clear-all, two-step `Esc` |
