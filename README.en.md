@@ -72,24 +72,26 @@ Open `test/fixture.html` in a browser for the visual regression; per-version scr
 
 ## Version history
 
-| Version | Date | Change |
-| --- | --- | --- |
-| v0.7.0 | 10-30 | Disk-backed extraction cache + idle warm-up, 2.5s budget / 150 sessions / 6 readers, jump no longer waits: first wide search 10.2s → 1.7s |
-| v0.6.1 | 10-30 | `reachSeq()` retries `loadThrough` until `baseSeq <= seq`; turn anchor via `data-chat-turn` |
-| v0.6.0 | 10-30 | Search history: last ten, `↑↓` / `Enter`, clear-all, two-step `Esc` |
-| v0.5.1 | 10-30 | Tool hits anchored by `callId`; a query never reuses a row |
-| v0.5.0 | 10-30 | Jump via `ISession.loadThrough(seq)`, search scope, draggable panel |
-| v0.4.4 | 10-29 | 400k → 8M characters per session, oversized notice, auto-continue when a page is empty |
-| v0.4.3 | 10-29 | Sidebar row marking (inset outline), folded groups expanded |
-| v0.4.2 | 10-29 | Highlight persists until the next jump, single `clearHighlight()`, panel docks at the bottom |
-| v0.4.1 | 10-29 | Nav state collapses to ~135px, two-pass `keepClearOfPanel()` |
-| v0.4.0 | 10-29 | Overlay stays open after a jump, prev/next and `F3` |
-| v0.3.3 | 10-29 | Panel tint fixed (neutral background only), `uiWorkspace` injected so clicks switch sessions |
-| v0.3.2 | 10-29 | Opacity slider, foreground colour picked from the background luminance |
-| v0.3.1 | 10-29 | Pill moved bottom-right and made draggable, theme tokens dropped, BOM "package unavailable" fixed |
-| v0.3.0 | 10-29 | Visible text only, multi-keyword AND, role/time labels, paging |
-| v0.2.0 | 10-29 | Own host route, bypassing the disabled `sessions.search` |
-| v0.1.0 | 10-29 | First version: search, open session, locate by snippet |
+Iterations between 2026-10-29 and 2026-10-30, newest first.
+
+| Version | Change |
+| --- | --- |
+| v0.7.0 | Disk-backed cache and idle warm-up, 2.5s / 150 sessions / 6 readers, jump no longer waits; wide search 10.2s → 1.7s |
+| v0.6.1 | `reachSeq()` retries `loadThrough` to `baseSeq <= seq`; turn anchor added |
+| v0.6.0 | Search history: last ten, `↑↓` / `Enter`, clear-all, two-step `Esc` |
+| v0.5.1 | Tool hits anchored by `callId`; a query never reuses a row |
+| v0.5.0 | Jump via `loadThrough(seq)`, search scope, draggable panel |
+| v0.4.4 | 400k → 8M characters per session; empty page continues to older sessions |
+| v0.4.3 | Sidebar row marking, folded groups expanded |
+| v0.4.2 | Highlight persists until the next jump; single `clearHighlight()` |
+| v0.4.1 | Nav state collapses to a nav bar; two-pass avoidance |
+| v0.4.0 | Overlay stays open after a jump, prev/next added |
+| v0.3.3 | Panel tint and "click does nothing" fixed |
+| v0.3.2 | Opacity slider; foreground colour from background luminance |
+| v0.3.1 | Pill moved bottom-right and draggable; BOM "package unavailable" fixed |
+| v0.3.0 | Visible text only, multi-keyword AND, paging |
+| v0.2.0 | Own host route, bypassing the disabled `sessions.search` |
+| v0.1.0 | First version: search, open session, locate by snippet |
 
 ## License
 
