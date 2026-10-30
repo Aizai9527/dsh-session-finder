@@ -1,0 +1,4 @@
+# dsh-session-finder bundle patch: add the row to whichever profile installs it.
+- insert:
+    - id: session-finder
+      name: dsh-session-finder

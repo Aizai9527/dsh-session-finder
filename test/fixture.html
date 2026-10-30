@@ -1,0 +1,277 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<title>dsh-session-finder client harness</title>
+<style>
+	html, body { margin: 0; height: 100%; font-family: system-ui, sans-serif; }
+	/* A host without any --dsw-* token: the panel must still paint an opaque surface. */
+	body { display: flex; gap: 12px; margin: 0; padding: 12px; background: rgb(21, 21, 23); color: rgb(230, 232, 235); }
+	.fixture-sidebar { order: -1; flex: none; width: 232px; display: flex; flex-direction: column; gap: 2px; padding: 8px; border-right: 1px solid rgba(255, 255, 255, .08); }
+	.fixture-session { padding: 6px 8px; border-radius: 6px; cursor: pointer; font-size: 13px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+	.fixture-session:hover { background: rgba(255, 255, 255, .06); }
+	.fixture-group { padding: 8px 4px 4px; font-size: 11px; color: rgba(230, 232, 235, .5); }
+	.fixture-expander { margin: 2px 0 0 4px; padding: 2px 8px; border: 1px solid rgba(255, 255, 255, .18); border-radius: 6px; background: transparent; color: inherit; font-size: 12px; cursor: pointer; }
+	#fixture-chat { flex: 1; min-width: 0; height: 100%; overflow: auto; }
+	.fixture-message { padding: 12px; border-bottom: 1px solid rgba(255, 255, 255, .08); }
+	/* Tall enough that the chat column actually scrolls, so position correction is exercised. */
+	.fixture-spacer { height: 1600px; }
+</style>
+</head>
+<body>
+<main data-slot="main.conversation">
+	<section data-slot="conversation.view">
+		<div data-chat-flow data-conversation-scroll>
+			<div class="fixture-message" data-chat-node-key="node-1" data-chat-turn="1">
+				<p>今天我们来聊<span>插件</span>搜索的问题，重点是定位。</p>
+			</div>
+			<div class="fixture-message" data-chat-node-key="node-2" data-chat-turn="2">
+				<p>第二条消息与搜索无关。</p>
+			</div>
+			<div class="fixture-fold" hidden="until-found">
+				<div class="fixture-message" data-chat-node-key="node-3" data-chat-turn="3">
+					<p>折叠里的唯一句子：香蕉挂件定位测试。</p>
+				</div>
+			</div>
+			<!-- Deep history: only exists after ISession.loadThrough(seq) pages back to it. -->
+			<div class="fixture-deep" hidden>
+				<div class="fixture-message" data-chat-node-key="node-deep" data-chat-turn="9">
+					<p>深层历史里的一句话：一小时没动就退出。</p>
+				</div>
+			</div>
+			<div class="fixture-message" data-chat-node-key="node-4" data-chat-turn="4">
+				<p>重复的一句话：定位测试。</p>
+			</div>
+			<div class="fixture-message" data-chat-node-key="node-5" data-chat-turn="5">
+				<p>重复的一句话：定位测试。</p>
+			</div>
+			<!-- Tool rows: the chat renders only a summary line, the arguments stay folded. -->
+			<div class="fixture-message" data-chat-call-id="call_a" data-chat-turn="6">
+				<p>运行命令 · 检查主机健康</p>
+			</div>
+			<div class="fixture-message" data-chat-call-id="call_b" data-chat-turn="7">
+				<p>运行命令 · 采集版本号</p>
+			</div>
+			<!-- A folded process row: its real output never becomes a text node. -->
+			<div class="fixture-message" data-chat-node-key="node-8" data-chat-turn="8">
+				<p>思考 · 已完成 4 步</p>
+			</div>
+			<div class="fixture-spacer" aria-hidden="true"></div>
+		</div>
+	</section>
+</main>
+<aside class="fixture-sidebar" aria-label="会话列表">
+	<div class="fixture-group">默认工作区</div>
+	<!-- The row the app paints as selected: `_sessionRow` + `_selected`, no data attribute. -->
+	<div class="fixture-session x_sessionRow x_selected" data-open="s-2">另一个 | 未命中的会话</div>
+	<!-- Rows are plain divs with a click handler, exactly like the app's session rows. -->
+	<div class="fixture-session" data-open="s-2">另一个 | 未命中的会话</div>
+	<div class="fixture-group">折叠的工作区</div>
+	<!-- Inside a collapsed group: the text is in the DOM but invisible, so marking it alone paints nothing. -->
+	<div class="fixture-folded" hidden>
+		<div class="fixture-session" data-open="s-1">优化 | 处理 dsh 更新</div>
+	</div>
+	<button type="button" class="fixture-expander">展开其余 1 个会话</button>
+</aside>
+<script>
+	window.__ModuleLoader__ = {
+		load(definition) {
+			window.__plugin = definition.factory(() => ({}));
+		}
+	};
+	window.__scrolled = [];
+	Element.prototype.scrollIntoView = function scrollIntoView(options) {
+		window.__scrolled.push({ key: this.dataset?.chatNodeKey ?? null, options: options ?? null });
+	};
+	// Chat folds listen for `beforematch`, exactly like the app's own find-in-page path.
+	for (const fold of document.querySelectorAll('.fixture-fold[hidden="until-found"]')) {
+		fold.addEventListener("beforematch", () => { fold.removeAttribute("hidden"); });
+	}
+	window.__opened = null;
+	// Session rows and the group expander behave like the app's own list.
+	for (const row of document.querySelectorAll(".fixture-session")) {
+		row.addEventListener("click", () => { window.__opened = row.dataset.open ?? null; });
+	}
+	const expander = document.querySelector(".fixture-expander");
+	expander.addEventListener("click", () => {
+		for (const group of document.querySelectorAll(".fixture-folded")) group.removeAttribute("hidden");
+		expander.hidden = true;
+	});
+	const titles = {
+		"s-1": { displayTitle: "优化 | 处理 dsh 更新", cwd: "C:\\proj\\alpha" },
+		"s-2": { displayTitle: "另一个 | 未命中的会话", cwd: "C:\\proj\\beta" }
+	};
+	window.__requests = [];
+	window.__loadThrough = [];
+	window.__ctx = {
+		sessions: {
+			list: {
+				getSnapshot: () => ({ byId: titles })
+			},
+			binding: (id) => (titles[id] === undefined ? undefined : {
+				session: {
+					async loadThrough(seq) {
+						window.__loadThrough.push({ id, seq });
+						// Paging back to that seq is what makes the message exist in the DOM.
+						for (const deep of document.querySelectorAll(".fixture-deep")) deep.removeAttribute("hidden");
+					}
+				}
+			})
+		},
+		uiWorkspace: {
+			openSession(id) { window.__opened = id; }
+		},
+		effect(run) { return run(); }
+	};
+	window.fetch = async (url) => {
+		const href = String(url ?? "");
+		const params = new URL(href, "http://fixture.invalid").searchParams;
+		const query = decodeURIComponent(params.get("q") ?? "插件");
+		const offset = Number(params.get("offset") ?? "0");
+		window.__requests.push({ q: query, offset, sessionId: params.get("sessionId"), cwd: params.get("cwd") });
+		// Two hits with the same text: each click must land on its own message.
+		if (query === "重复") {
+			return {
+				ok: true,
+				async json() {
+					return {
+						query,
+						terms: [query],
+						items: [
+							{ sessionId: "s-1", seq: 100, role: "assistant", time: 0, callId: null, snippet: "重复的一句话：定位测试。" },
+							{ sessionId: "s-1", seq: 101, role: "assistant", time: 0, callId: null, snippet: "重复的一句话：定位测试。" }
+						],
+						scanned: 1,
+						totalSessions: 1,
+						partialSessions: 0,
+						offset,
+						nextOffset: offset + 1,
+						hasOlder: false,
+						truncated: false
+					};
+				}
+			};
+		}
+		// A tool hit: its arguments are not in the DOM, so only the call id can anchor it.
+		if (query === "工具") {
+			return {
+				ok: true,
+				async json() {
+					return {
+						query,
+						terms: [query],
+						items: [{ sessionId: "s-1", seq: 200, role: "tool", time: 0, callId: "call_b", snippet: "命令里的一段文本：zzz-not-rendered" }],
+						scanned: 1,
+						totalSessions: 1,
+						partialSessions: 0,
+						offset,
+						nextOffset: offset + 1,
+						hasOlder: false,
+						truncated: false
+					};
+				}
+			};
+		}
+		// A folded output: its text is nowhere in the DOM, only its turn is rendered.
+		if (query === "折叠") {
+			return {
+				ok: true,
+				async json() {
+					return {
+						query,
+						terms: [query],
+						items: [{ sessionId: "s-1", seq: 300, role: "tool", time: 0, callId: null, turn: 8, snippet: "折叠的输出：zzz-not-rendered" }],
+						scanned: 1,
+						totalSessions: 1,
+						partialSessions: 0,
+						offset,
+						nextOffset: offset + 1,
+						hasOlder: false,
+						truncated: false
+					};
+				}
+			};
+		}
+		// A hit that only exists in deep history: the client must ask loadThrough first.
+		if (query === "深层") {
+			return {
+				ok: true,
+				async json() {
+					return {
+						query,
+						terms: [query],
+						items: [{ sessionId: "s-1", seq: 8853, role: "assistant", time: 0, snippet: "深层历史里的一句话：一小时没动就退出。" }],
+						scanned: 1,
+						totalSessions: 1,
+						partialSessions: 0,
+						offset,
+						nextOffset: offset + 1,
+						hasOlder: false,
+						truncated: false
+					};
+				}
+			};
+		}
+		// A query that only exists in an older page: page 0 is empty, page 48 has the hit.
+		if (query === "深页关键词" && offset === 0) {
+			return {
+				ok: true,
+				async json() {
+					return {
+						query,
+						terms: ["深页关键词"],
+						items: [],
+						scanned: 48,
+						totalSessions: 71,
+						partialSessions: 0,
+						offset: 0,
+						nextOffset: 48,
+						hasOlder: true,
+						truncated: false
+					};
+				}
+			};
+		}
+		// A query that does not exist anywhere: both pages come back empty.
+		if (query.startsWith("空")) {
+			return {
+				ok: true,
+				async json() {
+					return {
+						query,
+						terms: [query],
+						items: [],
+						scanned: offset === 0 ? 48 : 23,
+						totalSessions: 71,
+						partialSessions: 0,
+						offset,
+						nextOffset: offset === 0 ? 48 : 71,
+						hasOlder: offset === 0,
+						truncated: false
+					};
+				}
+			};
+		}
+		return {
+			ok: true,
+			async json() {
+				return {
+					query,
+					terms: [query],
+					items: [{ sessionId: "s-1", seq: 1, role: "user", time: 0, snippet: "今天我们来聊插件搜索的问题，重点是定位。" }],
+					scanned: 1,
+					totalSessions: offset === 0 ? 1 : 71,
+					partialSessions: 0,
+					offset,
+					nextOffset: offset + 1,
+					hasOlder: false,
+					truncated: false
+				};
+			}
+		};
+	};
+</script>
+<script src="../lib/client.js"></script>
+<script>window.__plugin.apply(window.__ctx);</script>
+</body>
+</html>
