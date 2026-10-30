@@ -26,7 +26,7 @@ v0.7.0 提速：范围＝当前会话本来就只要 0.15 秒，慢的是「全�
 dsh plugin add dsh-session-finder
 
 # 或直接从 GitHub
-dsh plugin add github:<owner>/dsh-session-finder
+dsh plugin add github:Aizai9527/dsh-session-finder
 ```
 
 装完重启桌面端：宿主半与客户端半都在启动时加载。仓库没有构建步骤，`lib/*.js` 就是分发产物。已在 DSH 插件市场（`awesome-dsh-plugin` 清单）登记。
