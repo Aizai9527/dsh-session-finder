@@ -8,6 +8,12 @@ DSH's own search opens the session but does not scroll to the hit: its response 
 
 It brings its own search route instead of calling the host's `sessions.search`, because some deployments configure the session index with `openAt: "never"` and that RPC always answers `SESSION_QUERY_SEARCH_DISABLED`. The host half reads session logs directly through `ctx.sessionPersistence`.
 
+![Search overlay: one hit with the matched phrase highlighted, a scope selector and prev/next controls](docs/screenshot-results.png)
+
+![After clicking a hit: the message is outlined, the sidebar row is marked, the panel collapses to paging controls](docs/screenshot-located.png)
+
+Both screenshots come from the fixture harness (`test/fixture.html`) with fake sessions — not from a real conversation. The Chinese README keeps the per-version screenshots under `docs/`.
+
 ## Install
 
 ```powershell
